@@ -1,0 +1,142 @@
+Age_I,Gender_I,Race_I,Public_I,Small_I,Adult_I,Learn_I,Age_F,Gender_F,Race_F,Public_F,Small_F,Adult_F,Learn_F,School
+8,M,,1,5,3,Yes,12,F,Hispanic,4,4,2,No,Monroe
+8,M,Hispanic,3,5,2,Yes,12,M,Hispanic,5,5,4,Yes,Monroe
+9,M,,3,5,3,No,,F,Hispanic,2,2,1,No,Monroe
+9,M,Hispanic,4,5,5,Yes,,F,Hispanic,4,5,3,No,Monroe
+9,M,Hispanic,3,5,3,Yes,9,M,White,5,5,5,Yes,Monroe
+10,F,Hispanic,1,2,1,No,9,F,Hispanic,1,5,5,Yes,Monroe
+9,M,Hispanic,2,5,1,Yes,8,F,Hispanic,1,5,5,Yes,Monroe
+9,F,Hispanic,3,4,2,Yes,,F,Hispanic,1,5,1,Yes,Monroe
+9,F,Hispanic,3,4,2,Yes,9,M,Hispanic,5,5,1,Yes,Monroe
+9,M,White,1,3,5,Yes,10,M,Hispanic/Black,3,4,2,Yes,Monroe
+,M,Hispanic,4,4,3,No,6,M,Hispanic/Black,5,2,5,No,Monroe
+12,M,Hispanic,4,5,4,Yes,12,M,Hispanic,2,5,5,Yes,Monroe
+8,F,Hispanic,1,1,1,Yes,10,M,Hispanic/Black,2,2,1,Yes,Monroe
+9,F,Hispanic,3,5,5,Yes,9,F,Hispanic,3,4,5,Yes,Monroe
+8,F,Hispanic,3,5,5,Yes,9,F,Hispanic,2,4,3,Yes,Monroe
+,,,,,,,9,F,Hispanic,2,5,5,Yes,Monroe Spanish
+,,,,,,,8,M,Hispanic,1,2,5,Yes,Monroe Spanish
+,,,,,,,9,F,Hispanic,3,5,5,Yes,Monroe Spanish
+,,,,,,,,M,Hispanic,1,2,4,Yes,Monroe Spanish
+13,M,Hispanic,2,5,4,Yes,,,,,,,,La Cumbre
+12,F,Hispanic,3,5,3,No,,,,,,,,La Cumbre
+13,M,Hispanic,2,5,3,Yes,,,,,,,,La Cumbre
+,M,Hispanic,2,3,2,No,,,,,,,,La Cumbre
+14,F,Hispanic,3,4,4,No,,,,,,,,La Cumbre
+13,F,Hispanic,4,5,3,No,,,,,,,,La Cumbre
+13,F,Hispanic,2,4,3,No,,,,,,,,La Cumbre
+13,F,Hispanic,3,5,3,Yes,,,,,,,,La Cumbre
+12,F,Hispanic,1,2,1,Yes,,,,,,,,La Cumbre
+13,F,Hispanic,2,4,2,Yes,,,,,,,,La Cumbre
+13,F,Hispanic,2,4,3,Yes,,,,,,,,La Cumbre
+12,F,Asian,2,4,4,Yes,,,,,,,,La Cumbre
+10,M,Hispanic,5,5,5,Yes,8,M,White,5,5,5,Yes,Franklin
+6,M,Hispanic,5,5,1,Yes,,F,Hispanic,5,5,5,Yes,Franklin
+,M,Hispanic,5,5,5,Yes,,M,,5,5,5,Yes,Franklin
+6,F,Hispanic,1,1,1,Yes,8,F,Hispanic,5,1,1,Yes,Franklin
+6,M,White,1,5,5,Yes,8,M,Hispanic/Black,5,3,5,Yes,Franklin
+7,F,Hispanic/Black,1,5,5,Yes,9,F,White,1,2,4,Yes,Franklin
+6,F,Hispanic,1,5,5,Yes,,M,Black,1,5,2,No,Franklin
+7,F,Black,3,1,5,Yes,7,F,White,1,5,4,Yes,Franklin
+9,F,Hispanic/Black,1,,5,Yes,7,M,White,2,2,2,Yes,Franklin
+6,F,Hispanic/Black,5,5,5,Yes,7,M,,5,5,5,Yes,Franklin
+6,M,Hispanic,5,5,5,Yes,6,F,Hispanic/Black,1,5,5,Yes,Franklin
+6,M,Hispanic,5,5,5,Yes,8,F,White,5,5,5,Yes,Franklin
+7,F,Hispanic,1,,5,Yes,8,F,White,4,5,5,No,Franklin
+11,F,Hispanic,1,4,5,Yes,,,,,,,,Mckinley
+11,F,Hispanic/Black,3,4,2,Yes,,,,,,,,Mckinley
+11,F,Hispanic,1,3,5,Yes,,,,,,,,Mckinley
+12,F,Hispanic,1,3,5,Yes,,,,,,,,Mckinley
+9,M,Hispanic,1,3,1,Yes,,,,,,,,Mckinley
+8,M,Hispanic,5,3,5,,,,,1,5,1,,Adelante
+9,M,Hispanic,5,4,5,,,,,1,3,1,,Adelante
+8,F,White/Hispanic/Asian,3,5,4,,,,,,,,,Adelante
+8,F,Hispanic,1,4,5,,,,,3,5,4,,Adelante
+,F,Hispanic,0,0,,,,,,1,1,1,,Adelante
+8,F,Hispanic,1,1,2,,,,,1,2,5,,Adelante
+8,M,Hispanic,2,3,5,,,,,1,5,1,,Adelante
+8,M,Hispanic,4,5,5,,,,,5,5,5,,Adelante
+8,F,Hispanic,0,0,,,,,,3,3,5,,Adelante
+8,F,Hispanic,1,5,5,,,,,,,,,Adelante
+8,M,Hispanic,2,1,3,,,,,,,,,Adelante
+7,M,,5,5,5,,,,,,,,,Adelante
+8,M,White,5,5,5,,7,M,Hispanic,5,5,5,Yes,Franklin
+8,M,Hispanic/White,3,5,5,Yes,12,F,Hispanic,3,3,4,Yes,Franklin
+7,M,White,5,5,5,Yes,12,F,Hispanic,1,5,2,Yes,Franklin
+7,M,Hispanic,5,5,5,Yes,12,F,Hispanic,5,5,5,Yes,Franklin
+8,F,Hispanic,1,3,5,Yes,,,,,,,,Franklin
+11,F,Hispanic,3,5,5,Yes,,,,,,,,Franklin
+7,F,Hispanic,3,3,5,Yes,,,,,,,,Franklin
+,M,Hispanic,5,5,5,Yes,,,,,,,,Franklin
+,M,Black,5,5,5,Yes,,,,,,,,Franklin
+8,F,Black,1,5,,Yes,,,,,,,,Franklin
+7,M,Hispanic,1,,5,Yes,,,,,,,,Franklin
+12,F,Hispanic,3,3,3,Yes,,,,,,,,Franklin
+11,F,Hispanic,1,3,5,Yes,7,M,Hispanic,1,5,5,Yes,Mckinley
+10,F,Hispanic,3,5,4,Yes,6,F,Hispanic,1,5,5,No,Mckinley
+12,F,Hispanic,3,1,5,Yes,6,M,Hispanic,5,5,5,Yes,Mckinley
+10,F,Hispanic,2,3,5,Yes,7,F,Hispanic,1,5,4,Yes,Mckinley
+11,M,Hispanic,3,4,2,Yes,7,M,Hispanic,5,5,5,Yes,Mckinley
+10,M,Hispanic,3,5,1,Yes,6,M,Hispanic,5,5,5,Yes,Mckinley
+,M,White,1,1,1,Yes,6,M,Hispanic,2,5,5,Yes,Mckinley
+10,F,Hispanic,3,5,4,Yes,6,M,Hispanic,1,5,3,Yes,Mckinley
+10,F,Hispanic,2,4,4,Yes,7,F,Hispanic,5,5,5,No,Mckinley
+10,F,Hispanic/White,4,4,2,Yes,6,F,Hispanic,1,5,4,Yes,Mckinley
+10,M,Black,1,3,5,Yes,6,F,Hispanic,1,5,3,Yes,Mckinley
+8,F,Hispanic,1,2,4,Yes,,,,,,,,Mckinley
+,F,Hispanic/Black,1,1,1,No,,,,,,,,Mckinley
+8,M,Hispanic,4,5,2,Yes,,,,,,,,Mckinley
+9,M,Black,2,5,1,Yes,,,,,,,,Mckinley
+8,M,White,3,3,3,Yes,,,,,,,,Mckinley
+8,F,Hispanic/White,1,4,2,Yes,,,,,,,,Mckinley
+8,F,Hispanic,4,5,3,Yes,,,,,,,,Mckinley
+9,F,Hispanic,5,5,5,Yes,,,,,,,,Mckinley
+8,F,White,1,2,5,Yes,,,,,,,,Mckinley
+10,F,Hispanic/Black,4,5,4,No,,,,,,,,Adams
+10,M,Hispanic,3,5,5,Yes,,,,,,,,Adams
+10,F,Hispanic,3,5,5,Yes,,,,,,,,Adams
+6,M,White,2,3,5,Yes,,,,,,,,Mckinley
+7,M,Hispanic,5,5,5,No,,,,,,,,Mckinley
+7,F,White,2,4,5,Yes,,,,,,,,Mckinley
+6,M,Hispanic,5,5,5,Yes,,,,,,,,Mckinley
+7,F,Hispanic,5,5,5,Yes,,,,,,,,Mckinley
+6,F,Hispanic/White,1,4,4,Yes,,,,,,,,Mckinley
+6,M,White,5,5,5,No,,,,,,,,Mckinley
+6,M,Hispanic/White,1,5,1,Yes,,,,,,,,Mckinley
+7,M,Hispanic/White,5,5,5,Yes,,,,,,,,Mckinley
+6,F,Hispanic/White,2,3,5,No,,,,,,,,Mckinley
+6,M,Hispanic,5,5,5,Yes,,,,,,,,Harding
+6,M,White,1,4,5,Yes,,,,,,,,Harding
+6,M,White,1,5,1,Yes,,,,,,,,Harding
+8,F,Hispanic,3,5,5,Yes,,,,,,,,Harding
+7,M,,5,1,5,Yes,,,,,,,,Harding
+8,M,Hispanic,5,5,5,Yes,,,,,,,,Harding
+8,F,Hispanic,5,5,5,Yes,,,,,,,,Harding
+6,M,Hispanic,5,5,5,Yes,,,,,,,,Harding
+,F,White,3,2,5,Yes,,,,,,,,Harding
+7,M,White,1,5,5,Yes,,,,,,,,Harding
+6,F,White,5,5,5,,,,,,,,,Harding
+6,F,White,5,5,5,Yes,,,,,,,,Harding
+7,M,Hispanic,5,5,5,Yes,,,,,,,,Harding
+7,F,Hispanic,3,4,5,Yes,,,,,,,,Harding
+7,F,Hispanic,2,2,5,Yes,,,,,,,,Harding
+6,F,Hispanic,5,1,5,Yes,,,,,,,,Harding
+7,F,Hispanic,5,1,5,Yes,,,,,,,,Harding
+6,F,White,1,1,3,No,,,,,,,,Harding
+7,F,Hispanic,5,5,5,Yes,,,,,,,,Harding
+6,M,Hispanic/White,1,5,5,Yes,,,,,,,,Harding
+7,F,,5,5,5,Yes,,,,,,,,Harding
+8,F,Hispanic,2,5,1,Yes,,,,,,,,Adams
+7,F,Hispanic,5,5,5,Yes,,,,,,,,Adams
+9,M,Hispanic,1,5,4,Yes,,,,,,,,Adams
+9,F,Hispanic,2,4,3,Yes,,,,,,,,Adams
+6,F,Hispanic,3,3,5,Yes,,,,,,,,Adams
+7,M,Black,3,5,5,Yes,,,,,,,,Adams
+6,M,White,5,5,5,Yes,,,,,,,,Adams
+9,F,Hispanic,3,5,1,Yes,,,,,,,,Adams
+8,F,Hispanic,4,3,1,Yes,,,,,,,,Adams
+9,M,Hispanic,2,4,5,Yes,,,,,,,,Adams
+8,M,Hispanic,1,4,5,Yes,,,,,,,,Adams
+8,M,Hispanic,3,4,3,Yes,,,,,,,,Adams
+7,M,Hispanic,3,1,5,Yes,,,,,,,,Adams
+6,M,White,5,4,1,Yes,,,,,,,,Adams
