@@ -1,0 +1,289 @@
+---
+title: "Monroe"
+output: html_document
+date: "2024-03-23"
+---
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(gridExtra)
+```
+
+Load Data Set
+```{r}
+longer = read.csv2("/Users/oliviacandelaria/Documents/T4S/Longer-Table 1.csv",sep=',')
+View(longer)
+longer <- longer[, -10]
+```
+
+Filter out Monroe data
+```{r}
+monroe_data <- longer%>%
+  filter(grepl('Monroe',School))
+View(monroe_data)
+```
+
+Split multiracial students into new data set
+```{r}
+race_split_data = monroe_data
+for(i in 1:nrow(monroe_data)){
+  if(grepl('/',race_split_data$Race[i])){
+    race_split <- strsplit(as.character(race_split_data$Race[i]), "/")[[1]]
+    if(length(race_split)<3){
+      race1 <- race_split[1]
+      race2 <- race_split[2]
+      race_split_data$Race[i] = race1
+      row_to_duplicate <- race_split_data[i, ]
+      row_to_duplicate$Race <- race2
+      race_split_data <- rbind(race_split_data, row_to_duplicate)
+    }else{
+      race1 <- race_split[1]
+      race2 <- race_split[2]
+      race3 <- race_split[3]
+      race_split_data$Race[i] = race1
+      
+      row_to_duplicate1 <- race_split_data[i, ]
+      row_to_duplicate1$Race <- race2
+      race_split_data <- rbind(race_split_data, row_to_duplicate1)
+      
+      row_to_duplicate2 <- race_split_data[i, ]
+      row_to_duplicate2$Race <- race3
+      race_split_data <- rbind(race_split_data, row_to_duplicate2)
+    }
+  }
+}
+View(race_split_data)
+
+race_vector <- c('Black', 'Hispanic', 'White')
+cumulative_race_filtered <- race_split_data[race_split_data$Race %in% race_vector, ]
+```
+
+Create Age Range column in data set
+```{r}
+monroe_data['agerange'] <- NA
+
+for(i in 1:nrow(monroe_data)){
+  if (!is.na(monroe_data$Age[i])) {
+    if(monroe_data$Age[i]<9){
+      monroe_data$agerange[i] = "6-8"
+    }else if(9<=monroe_data$Age[i] & monroe_data$Age[i]<12){
+      monroe_data$agerange[i] = "9-11"
+    }else{
+      monroe_data$agerange[i] = "12-14"
+    }
+  }
+}
+#View(monroe_data)
+```
+
+Plots: 
+
+Public Speaking by Race
+```{r}
+grouped_data <- cumulative_race_filtered %>%
+  group_by(Status, Race)
+
+summary_data <- (grouped_data) %>%
+  summarise(mean_value = mean(Public, na.rm=T))
+summary_data
+
+desired_order <- c("Initial","Final")
+
+public_plot <- ggplot(summary_data, aes(x=Race,y=mean_value,fill = factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  labs(title='',subtitle = 'Public Speaking', 
+       x = "", y = "Average Level of Confidence")+
+  guides(fill=guide_legend(title=""))+
+  theme(legend.position = "none")+
+  scale_y_continuous(limits=c(0,5))
+```
+
+Small Group by Race
+```{r}
+grouped_data <- cumulative_race_filtered %>%
+  group_by(Status, Race)
+summary_data <- (grouped_data) %>%
+  summarise(mean_value = mean(Small, na.rm=T))
+summary_data
+
+desired_order <- c("Initial","Final")
+
+small_plot <- ggplot(summary_data, aes(x=Race,y=mean_value,fill = factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  labs(title = "",subtitle = 'Small Group', 
+       x = "", y = "")+
+  guides(fill=guide_legend(title=""))+
+  theme(legend.position = "none")+
+  scale_y_continuous(limits=c(0,5))
+```
+
+Adult by Race
+```{r}
+grouped_data <- cumulative_race_filtered %>%
+  group_by(Status, Race)
+summary_data <- (grouped_data) %>%
+  summarise(mean_value = mean(Adult, na.rm=T))
+summary_data
+
+desired_order <- c("Initial","Final")
+
+adult_plot <- ggplot(summary_data, aes(x=Race,y=mean_value,fill = factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  labs(title = "",subtitle = 'Speaking with Adults', 
+       x = "", y = "")+ guides(fill=guide_legend(title=""))+
+  theme(legend.position = "none")+
+  scale_y_continuous(limits=c(0,5))
+```
+
+Arrange plots side by side
+```{r}
+combined_plot <- grid.arrange(public_plot, small_plot, adult_plot, ncol = 3, 
+                              top = 'Confidence Levels by Ethnicity\nInitial vs. Final')
+combined_plot
+```
+
+```{r}
+proportions_Initial <- cumulative_race_filtered %>%
+  group_by(Status, Race, Learn) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))%>%
+  filter(Status=='Initial', Learn != '')
+proportions_Final <- cumulative_race_filtered %>%
+  group_by(Status, Race, Learn) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))%>%
+  filter(Status=='Final', Learn != '')
+
+learn_plot_Initial<-ggplot(proportions_Initial, aes(x=Learn,y=proportion,fill = Race))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  theme(legend.position = "none")+
+  scale_y_continuous(limits=c(0,1))
+learn_plot_Final<-ggplot(proportions_Final, aes(x=Learn,y=proportion,fill = Race))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+labs(y='')+
+  scale_y_continuous(limits=c(0,1))
+
+#Combined plot
+learn_plot <- grid.arrange(learn_plot_Initial, learn_plot_Final, ncol = 2, widths = c(1,1),
+                  top = 'Do You Like to Learn by Ethnicity\nInitial vs. Final')
+learn_plot
+```
+
+Age Range Public
+```{r}
+grouped_data <- monroe_data %>%
+  group_by(Status, agerange)%>%
+  summarise(mean_value = mean(Public, na.rm=T))%>%
+  filter(agerange != '')
+grouped_data
+
+desired_order <- c("Initial","Final")
+age_order <-c('6-8','9-11','12-14')
+
+
+public_plot <- ggplot(grouped_data, aes(x=factor(agerange,level=age_order),y=mean_value,fill = 
+                                          factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  labs(title='Average Level of Confidence by Age Range',subtitle = 'Public Speaking', 
+       x = "Age Range", y = "")+
+  guides(fill=guide_legend(title=""))+
+  scale_y_continuous(limits=c(0,5))
+public_plot
+```
+
+Small Group by Age
+```{r}
+grouped_data <- monroe_data %>%
+  group_by(Status, agerange)%>%
+  summarise(mean_value = mean(Small, na.rm=T))%>%
+  filter(agerange != '')
+grouped_data
+
+desired_order <- c("Initial","Final")
+age_order <-c('6-8','9-11','12-14')
+
+small_plot <- ggplot(grouped_data, aes(x=factor(agerange,level=age_order),y=mean_value,fill =
+                                          factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  labs(title='Average Level of Confidence by Age Range',subtitle = 'Small Group', 
+       x = "Age Range", y = "")+
+  guides(fill=guide_legend(title=""))+
+  scale_y_continuous(limits=c(0,5))
+small_plot
+```
+
+Adult by Age
+```{r}
+grouped_data <- monroe_data %>%
+  group_by(Status, agerange)%>%
+  summarise(mean_value = mean(Adult, na.rm=T))%>%
+  filter(agerange != '')
+grouped_data
+
+desired_order <- c("Initial","Final")
+age_order <-c('6-8','9-11','12-14')
+
+adult_plot <- ggplot(grouped_data, aes(x=factor(agerange,level=age_order),y=mean_value,fill =
+                                          factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  labs(title='Average Level of Confidence by Age Range',subtitle = 'Speaking to Adults', 
+       x = "Age Range", y = "")+
+  guides(fill=guide_legend(title=""))+
+  scale_y_continuous(limits=c(0,5))
+adult_plot
+```
+
+Combined age plots
+```{r}
+combined_plot <- grid.arrange(public_plot, small_plot, adult_plot, ncol = 3, 
+                              top = 'Confidence Levels by Age Range\nInitial vs. Final')
+combined_plot
+```
+
+UnGrouped Data:
+
+Do you like to learn
+```{r}
+proportions <- monroe_data %>%
+  group_by(Status, Learn) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))%>%
+  filter( Learn != '')
+proportions
+
+desired_order <- c("Initial","Final")
+ggplot(proportions,aes(x=Learn,y=proportion,fill = factor(Status, level=desired_order)))+
+  geom_bar(stat= 'identity',position = "dodge")+ labs(title = "Initial/Final Difference in Willingness to Learn", subtitle = 'Monroe')+
+  scale_x_discrete(labels = c("No","Yes")) +
+  labs(x="Do you like to learn?")+
+  guides(fill=guide_legend(title="Initial or Final"))+
+  theme_minimal()
+```
+
+Confidence Levels
+```{r}
+data_levels <- monroe_data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))
+
+ggplot(data_levels, aes(x=factor(ConfLevels, c('Public','Small','Adult')),y=mean_value,fill = factor(Status, desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  labs(title = "Initial/Final Confidence Levels", subtitle = 'Monroe', y='Mean Confidence',x='')+
+  guides(fill=guide_legend(title=""))
+
+data_levels <- monroe_data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, ConfLevels, School)%>%
+  summarise(mean_value = mean(Level, na.rm=T))
+
+spanish_plot <- ggplot(data_levels, aes(x=factor(ConfLevels, c('Public','Small','Adult')),y=mean_value,fill = factor(Status, desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  labs(title = "Initial/Final Confidence Levels", subtitle = 'Monroe', y='Mean Confidence',x='')+
+  guides(fill=guide_legend(title=""))+ facet_wrap(~School)
+spanish_plot
+```

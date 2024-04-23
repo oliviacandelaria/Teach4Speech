@@ -1,0 +1,405 @@
+---
+title: "cumulativedata"
+output:
+  html_document: default
+  pdf_document: default
+date: "2024-02-15"
+---
+CUMULATIVE 
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+```{r}
+cumulativeraw = read.csv2("/Users/oliviacandelaria/Documents/T4S/T4S Survey Data - Cumulative.csv",sep=',')
+View(cumulativeraw)
+cumulative = cumulativeraw
+```
+
+Logical Variable for Initial Learn and Learn Numeric 
+```{r}
+cumulative$Initial.Learn <- as.logical(ifelse(is.na(cumulative$Initial.Learn), 
+                                          NA, cumulative$Initial.Learn == "Yes"))
+cumulative['learn_numeric_initial'] <-as.numeric(cumulative$Initial.Learn) + 
+  is.na(cumulative$Initial.Learn)
+
+View(cumulative)
+```
+# cumulative now has logical variable for Initial.Learn and
+# new variable learn_numeric that converted logical to 0/1
+
+
+Creates DF with Averages Column
+```{r}
+grouped_sums <- cumulative %>%
+  group_by(Gender) %>%
+  summarize(sum = sum(na.omit(learn_numeric_initial)))
+grouped_sums
+cumulative['LearnAverage']=NA
+
+for (i in 1:nrow(cumulative)) {
+  if (!is.na(cumulative$Initial.Learn[i]) && !is.na(cumulative$Gender[i])) {
+    if (cumulative$Initial.Learn[i] & cumulative$Gender[i] == "M") {
+      cumulative$LearnAverage[i] <- grouped_sums$sum[2] / sum(cumulative$Gender=="M")
+    } else if (!cumulative$Initial.Learn[i] & cumulative$Gender[i] == "M") {
+      cumulative$LearnAverage[i] <- (sum(cumulative$Gender=="M") - grouped_sums$sum[2]) / sum(cumulative$Gender=="M")
+    } else if (cumulative$Initial.Learn[i] & cumulative$Gender[i] == "F") {
+      cumulative$LearnAverage[i] <- grouped_sums$sum[1] / sum(cumulative$Gender=="F")
+    } else {
+      cumulative$LearnAverage[i] <- (sum(cumulative$Gender=="F") - grouped_sums$sum[1]) / sum(cumulative$Gender=="F")
+    }
+  }
+}
+View(cumulative)
+```
+
+Gender Difference in Willingness to Learn
+```{r}
+filtered_data <- cumulative[!is.na(cumulative$Initial.Learn), ]
+
+ggplot(filtered_data,aes(x=Initial.Learn,y=LearnAverage,fill = Gender)) +
+  geom_bar(stat= 'identity',position = "dodge")+ labs(title = "Gender Difference in Willingness to Learn")+
+  scale_x_discrete(labels = c("No","Yes")) +
+  labs(x="Do you like to learn?")+
+  #annotate("text", x = 1.75, y = .65, label = "0.673")+ annotate("text", x = 2.25, y = .6, label = "0.625")+
+  #annotate("text", x = 0.75, y = .3, label = "0.327")+ annotate("text", x = 1.25, y = .35, label = "0.375")+
+  theme_minimal()
+```
+
+Average Confidence Levels by Gender
+```{r}
+#View(cumulative%>%group_by(Gender,average))
+
+cumulative2 <- (cumulative) %>% 
+pivot_longer(cols = c("Initial.Public", "Initial.Small", "Initial.Adults"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")
+#View((cumulative2))
+
+cumulative3 <- ((cumulative2))%>% 
+  group_by(ConfLevels, Gender) %>% 
+  mutate(LevelAverage = mean(Level, na.rm=T))
+
+#View(cumulative3[,c(1,17)])
+
+ggplot(cumulative3,aes(x = ConfLevels, y = LevelAverage , fill = Gender))+
+  geom_bar(stat = "identity", position = "dodge",  width = .5)+
+  labs(title = "Average Confidence Levels by Gender", x = "Variables",
+       y = "Average Level of Confidence")+
+  guides(fill=guide_legend(title="Gender"))+
+  scale_x_discrete(labels=c("Initial.Public"="Public Speaking", "Initial.Adults" =
+        "Speaking with Adults", "Initial.Small"="Speaking in a Small Group"))+
+  theme_minimal()
+
+```
+
+Creates Age Range Variable
+```{r}
+cumulative['agerange'] <- NA
+
+for(i in 1:nrow(cumulative)){
+  if (!is.na(cumulative$Age[i])) {
+    if(cumulative$Age[i]<9){
+      cumulative$agerange[i] = "6-8"
+    }else if(9<=cumulative$Age[i] & cumulative$Age[i]<12){
+      cumulative$agerange[i] = "9-11"
+    }else{
+      cumulative$agerange[i] = "12-14"
+    }
+  }
+}
+```
+
+Average Public Speaking Confidence by Age
+```{r}
+data_age <- cumulative %>%
+  group_by(agerange)%>%
+  mutate(PublicAverage = mean(Initial.Public))
+
+level_order <- c("6-8", "9-11", "12-14")
+
+ggplot(na.omit(data_age)) + geom_bar(aes(x = factor(agerange, level = level_order),
+       y = PublicAverage, fill = factor(agerange, level = level_order)), stat = "identity", position = "dodge", 
+       width = 0.5) + theme_minimal() + guides(fill=guide_legend(title="Age"))+
+       labs(title = "Average Public Speaking Confidence by Age", x="Age",
+            y="Public Speaking Confidence")
+```
+Average Small Group Confidence by Age
+```{r}
+data_age <- data_age %>%
+  group_by(agerange)%>%
+  mutate(SmallAverage = mean(na.omit(Initial.Small)))
+
+ggplot(na.omit(data_age)) + geom_bar(aes(x = factor(agerange, level = level_order),
+       y = SmallAverage, fill = factor(agerange, level = level_order)), stat = "identity", position = "dodge", 
+       width = 0.5) + theme_minimal() + guides(fill=guide_legend(title="Age"))+
+       labs(title = "Average Small Group Confidence by Age", x="Age",
+            y="Small Group Confidence")
+```
+Average Confidence Speaking to Adults by Age
+```{r}
+data_age <- data_age %>%
+  group_by(agerange)%>%
+  mutate(AdultAverage = mean(na.omit(Initial.Adults)))
+
+ggplot(na.omit(data_age)) + geom_bar(aes(x = factor(agerange, level = level_order),
+       y = AdultAverage, fill = factor(agerange, level = level_order)), stat = "identity", position = "dodge", 
+       width = 0.5) + theme_minimal() + guides(fill=guide_legend(title="Age"))+
+       labs(title = "Average Confidence Speaking to Adults by Age", x="Age",
+            y="Confidence with Adults")
+```
+Average Confidence Levels by Age
+```{r}
+cumulative3['agerange'] <- NA
+
+for(i in 1:nrow(cumulative3)){
+  if (!is.na(cumulative3$Age[i])) {
+    if(cumulative3$Age[i]<9){
+      cumulative3$agerange[i] = "6-8"
+    }else if(9<=cumulative3$Age[i] & cumulative3$Age[i]<12){
+      cumulative3$agerange[i] = "9-11"
+    }else{
+      cumulative3$agerange[i] = "12-14"
+    }
+  }
+}
+
+cumulative4 <- cumulative3 %>% 
+  group_by(ConfLevels, agerange) %>% 
+  mutate(AgeAverage = mean(Level))
+
+cumulative4_filtered <- cumulative4 %>% filter(!is.na(agerange))
+
+
+ggplot(cumulative4_filtered,aes(x = ConfLevels, y = AgeAverage , fill =factor(agerange, level = level_order)))+
+  geom_bar(stat = "identity", position = "dodge",  width = .5)+
+  labs(title = "Average Confidence Levels by Age", x = "Variables",
+       y = "Average Level of Confidence")+
+  guides(fill=guide_legend(title="Age"))+
+  scale_x_discrete(labels=c("Initial.Public"="Public Speaking", "Initial.Adults" =
+        "Speaking with Adults", "Initial.Small"="Speaking in a Small Group"))+
+  theme_minimal()
+```
+
+```{r}
+summary(cumulative)
+head(cumulative)
+
+sum(na.omit(cumulative$agerange == "6-8"))
+sum(na.omit(cumulative$agerange == "9-11"))
+sum(na.omit(cumulative$agerange == "12-14"))
+sum(cumulative$Gender == "M")
+sum(cumulative$Gender == "F")
+
+```
+
+
+
+H0: mean confidence with adults 6-8 = mean confidence with adults 12-14
+H1: mean confidence with adults 6-8 != mean confidence with adults 12-14
+a = 0.05
+```{r}
+cumulative_subset <- cumulative[cumulative$agerange %in% c("6-8", "12-14"), ]
+
+# Extract Initial.Adults for each age range
+initial_adults_6_8 <- cumulative_subset$Initial.Adults[cumulative_subset$agerange == "6-8"]
+initial_adults_12_14 <- cumulative_subset$Initial.Adults[cumulative_subset$agerange == "12-14"]
+
+# Perform two-sample t-test
+t_test_result <- t.test(initial_adults_6_8, initial_adults_12_14)
+
+# Print the result
+print(t_test_result)
+
+# fail to reject the null, our initial hypothesis is right and there is no sig difference
+```
+p-value = 0.0516 so it is low enough to reject the null hypothesis that 
+mean Initial.Adults is equal for 6-8 and 12-14
+This means that there is significant difference between the grade groups
+
+```{r}
+cumulative_subset <- cumulative[cumulative$agerange %in% c("6-8", "9-11"), ]
+
+# Extract Initial.Adults for each age range
+initial_adults_6_8 <- cumulative_subset$Initial.Adults[cumulative_subset$agerange == "6-8"]
+initial_adults_9_11 <- cumulative_subset$Initial.Adults[cumulative_subset$agerange == "9-11"]
+
+# Perform two-sample t-test
+t_test_result <- t.test(initial_adults_6_8, initial_adults_9_11)
+
+# Print the result
+print(t_test_result)
+
+```
+
+```{r}
+cumulative_subset <- cumulative[cumulative$agerange %in% c("9-11", "12-14"), ]
+
+# Extract Initial.Adults for each age range
+initial_adults_9_11 <- cumulative_subset$Initial.Adults[cumulative_subset$agerange == "9-11"]
+initial_adults_12_14 <- cumulative_subset$Initial.Adults[cumulative_subset$agerange == "12-14"]
+
+# Perform two-sample t-test
+t_test_result <- t.test(initial_adults_9_11, initial_adults_12_14)
+
+# Print the result
+print(t_test_result)
+```
+
+Count Number of Black Students
+```{r}
+sum(grepl('Black',cumulative$Race))
+```
+
+Cleaning Race Variable
+```{r}
+#Changes all Hispanic/black students to just black or just white
+RaceData <- cumulative2
+for(i in 1:nrow(cumulative2)){
+  if(grepl('/Black', cumulative2$Race[i])){
+    RaceData$Race[i] <- 'Black'
+  } else if(grepl('/White', cumulative2$Race[i])){
+    RaceData$Race[i] <- 'White'
+  }
+}
+
+sum(grepl('Hispanic', cumulative$Race))
+sum(grepl('Black', cumulative$Race))
+sum(grepl('White', cumulative$Race))
+sum(grepl('Hispanic/White', cumulative$Race))
+sum(grepl('Hispanic/Black', cumulative$Race))
+
+
+```
+
+Average Confidence Levels by Ethnicity
+```{r}
+cumulative_race <- cumulative2 %>% 
+  group_by(ConfLevels, Race) %>% 
+  mutate(RaceAverage = mean(Level, na.rm = T))
+#levels(factor(cumulative$Race))
+
+race_vector <- c('Asian', 'Black', 'Hispanic', 'White')
+cumulative_race_filtered <- cumulative_race[cumulative_race$Race %in% race_vector, ]
+cumulative_race_filtered <- cumulative_race_filtered %>% filter(!is.na(Race))
+
+#View(cumulative_race_filtered)
+ggplot(cumulative_race_filtered, aes(x = ConfLevels, y = RaceAverage , fill =Race))+
+  geom_bar(stat = "identity", position = "dodge",  width = .5)+
+  labs(title = "Average Confidence Levels by Ethnicity", x = "",
+       y = "Average Level of Confidence")+
+  guides(fill=guide_legend(title="Ethnicity"))+
+  scale_x_discrete(labels=c("Initial.Public"="Public Speaking", "Initial.Adults" =
+        "Speaking with Adults", "Initial.Small"="Speaking in a Small Group"))+
+  theme_minimal()
+```
+
+Average Confidence Levels by Ethnicity (without the 1 asian student)
+- also put all Hispanic/Black into black category and Hispanic/White into white
+```{r}
+cumulative_race <- RaceData %>% 
+  group_by(ConfLevels, Race) %>% 
+  mutate(RaceAverage = mean(Level, na.rm = T))
+#levels(factor(cumulative$Race))
+
+race_vector <- c('Black', 'Hispanic', 'White')
+cumulative_race_filtered <- cumulative_race[cumulative_race$Race %in% race_vector, ]
+cumulative_race_filtered <- cumulative_race_filtered %>% filter(!is.na(Race))
+
+#View(cumulative_race_filtered)
+ggplot(cumulative_race_filtered, aes(x = ConfLevels, y = RaceAverage , fill =Race))+
+  geom_bar(stat = "identity", position = "dodge",  width = .5)+
+  labs(title = "Average Confidence Levels by Ethnicity", x = "",
+       y = "Average Level of Confidence")+
+  guides(fill=guide_legend(title="Ethnicity"))+
+  scale_x_discrete(labels=c("Initial.Public"="Public Speaking", "Initial.Adults" =
+        "Speaking with Adults", "Initial.Small"="Speaking in a Small Group"))+
+  theme_minimal()
+```
+
+Biracial Graph
+```{r}
+RaceData$Race <- ifelse(cumulative2$Race %in% c("Hispanic/Black", "Hispanic/White"), "Biracial", cumulative2$Race)
+View(RaceData)
+cumulative_race <- RaceData %>% 
+  group_by(ConfLevels, Race) %>% 
+  mutate(RaceAverage = mean(Level, na.rm = T))
+#levels(factor(cumulative$Race))
+
+
+race_vector <- c('Black', 'Hispanic', 'White', 'Biracial')
+cumulative_race_filtered <- cumulative_race[cumulative_race$Race %in% race_vector, ]
+cumulative_race_filtered <- cumulative_race_filtered %>% filter(!is.na(Race))
+
+#View(cumulative_race_filtered)
+ggplot(cumulative_race_filtered, aes(x = ConfLevels, y = RaceAverage , fill =Race))+
+  geom_bar(stat = "identity", position = "dodge",  width = .5)+
+  labs(title = "Average Confidence Levels by Ethnicity", x = "",
+       y = "Average Level of Confidence")+
+  guides(fill=guide_legend(title="Ethnicity"))+
+  scale_x_discrete(labels=c("Initial.Public"="Public Speaking", "Initial.Adults" =
+        "Speaking with Adults", "Initial.Small"="Speaking in a Small Group"))+
+  theme_minimal()
+```
+
+
+Race graph 
+```{r}
+race_split_data = cumulative
+for(i in 1:nrow(race_split_data)){
+  if(grepl('/',race_split_data$Race[i])){
+    race_split <- strsplit(as.character(race_split_data$Race[i]), "/")[[1]]
+    if(length(race_split)<3){
+      race1 <- race_split[1]
+      race2 <- race_split[2]
+      race_split_data$Race[i] = race1
+      row_to_duplicate <- race_split_data[i, ]
+      row_to_duplicate$Race <- race2
+      race_split_data <- rbind(race_split_data, row_to_duplicate)
+    }else{
+      race1 <- race_split[1]
+      race2 <- race_split[2]
+      race3 <- race_split[3]
+      race_split_data$Race[i] = race1
+      
+      row_to_duplicate1 <- race_split_data[i, ]
+      row_to_duplicate1$Race <- race2
+      race_split_data <- rbind(race_split_data, row_to_duplicate1)
+      
+      row_to_duplicate2 <- race_split_data[i, ]
+      row_to_duplicate2$Race <- race3
+      race_split_data <- rbind(race_split_data, row_to_duplicate2)
+    }
+  }
+}
+View(race_split_longer)
+
+race_split_longer <- (race_split_data) %>% 
+pivot_longer(cols = c("Initial.Public", "Initial.Small", "Initial.Adults"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")
+
+race_split_longer <- ((race_split_longer))%>% 
+  group_by(ConfLevels, Race) %>% 
+  mutate(LevelAverage = mean(Level, na.rm=T))
+
+race_split_longer <- race_split_longer %>% filter(!is.na(Race))
+race_split_longer <- race_split_longer[race_split_longer$Race %in% race_vector, ]
+
+
+ggplot(race_split_longer, aes(x = ConfLevels, y = LevelAverage , fill =Race))+
+  geom_bar(stat = "identity", position = "dodge",  width = .5)+
+  labs(title = "Average Confidence Levels by Ethnicity", x = "",
+       y = "Average Level of Confidence")+
+  guides(fill=guide_legend(title="Ethnicity"))+
+  scale_x_discrete(labels=c("Initial.Public"="Public Speaking", "Initial.Adults" =
+        "Speaking with Adults", "Initial.Small"="Speaking in a Small Group"))+
+  theme_minimal()
+```
+
+
+
+
+

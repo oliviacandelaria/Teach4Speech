@@ -1,0 +1,160 @@
+---
+title: "FinalCumulativeAnalysis"
+output: html_document
+date: "2024-02-29"
+---
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+```{r}
+cumulativeraw = read.csv2("/Users/oliviacandelaria/Documents/T4S/T4S Survey Data - Cumulative.csv",sep=',')
+View(cumulativeraw)
+data = cumulativeraw
+```
+
+Learn Numeric
+```{r}
+data$Initial.Learn <- as.logical(ifelse(is.na(data$Initial.Learn), 
+                                          NA, data$Initial.Learn == "Yes"))
+data$Final.Learn <- as.logical(ifelse(is.na(data$Final.Learn), 
+                                          NA, data$Final.Learn == "Yes"))
+
+
+View(data)
+```
+
+Creates DF with Averages Column
+```{r}
+data['LearnAverage_Initial']=NA
+data['LearnAverage_Final']=NA
+prop_trueI <- sum(na.omit(data$Initial.Learn)) / length(na.omit(data$Initial.Learn))
+prop_falseI <- 1-prop_trueI
+
+for (i in 1:nrow(data)) {
+  if (!is.na(data$Initial.Learn[i]) ) {
+    
+    if (data$Initial.Learn[i]) {
+      data$LearnAverage_Initial[i] <- prop_trueI
+    } 
+    else if (!data$Initial.Learn[i]) {
+      data$LearnAverage_Initial[i] <- prop_falseI
+    }
+  }
+}
+
+prop_trueF <- sum(na.omit(data$Final.Learn)) / length(na.omit(data$Final.Learn))
+prop_falseF <- 1-prop_trueF
+
+for (i in 1:nrow(data)) {
+  if (!is.na(data$Final.Learn[i]) && !is.na(data$Gender[i])) {
+    
+    if (data$Final.Learn[i]) {
+      data$LearnAverage_Final[i] <- prop_trueF
+    } 
+    else if (!data$Final.Learn[i]) {
+      data$LearnAverage_Final[i] <- prop_falseF
+    }
+  }
+}
+
+View(data)
+```
+
+```{r}
+binary <- c(data$Initial.Learn,data$Final.Learn)
+averages <- c(data$LearnAverage_Initial,data$LearnAverage_Final)
+
+data_longer <- data.frame(binary, averages)
+data_longer['IorF']<-NA
+
+for(i in 1:nrow(data_longer)){
+  if(!is.na(data_longer$averages[i])){
+  if(data_longer$averages[i] == prop_trueI | data_longer$averages[i] == prop_falseI){
+    data_longer$IorF[i]<- "Initial"
+  }else if(data_longer$averages[i] == prop_falseF | data_longer$averages[i] == prop_trueF){
+    data_longer$IorF[i]<- "Final"
+  }
+}
+}
+
+View(data_longer)
+```
+Initial and Final Difference in Willingness to Learn
+```{r}
+desired_order <- c("Initial","Final")
+ggplot(na.omit(data_longer),aes(x=binary,y=averages,fill = factor(IorF, level=desired_order)))+
+  geom_bar(stat= 'identity',position = "dodge")+ labs(title = "Initial/Final Difference in Willingness to Learn")+
+  scale_x_discrete(labels = c("No","Yes")) +
+  labs(x="Do you like to learn?")+
+  guides(fill=guide_legend(title="Initial or Final"))+
+  theme_minimal()
+
+levels(factor(data_longer$averages))
+```
+
+
+
+```{r}
+data_levels <- (data) %>% 
+  pivot_longer(cols = c("Initial.Public", "Initial.Small", "Initial.Adults"), 
+               names_to = "ConfLevels_I", 
+               values_to = "Level_I")
+data_levels <- ((data_levels))%>% 
+  group_by(ConfLevels_I) %>% 
+  mutate(LevelAverage_I = mean(Level_I, na.rm=T))
+
+data_levels <- (data_levels) %>% 
+  pivot_longer(cols = c("Final.Public", "Final.Small", "Final.Adults"), 
+               names_to = "ConfLevels_F", 
+               values_to = "Level_F")
+data_levels <- ((data_levels))%>% 
+  group_by(ConfLevels_F) %>% 
+  mutate(LevelAverage_F = mean(Level_F, na.rm=T))
+
+
+
+View(data_levels)
+```
+```{r}
+level <- c(data_levels$ConfLevels_I,data_levels$ConfLevels_F)
+average <- c(data_levels$LevelAverage_I,data_levels$LevelAverage_F)
+levels_set <- data.frame(level, average)
+View(levels_set)
+
+levels_set['status']<- NA
+for(i in 1:nrow(levels_set)){
+  if(grepl("Initial", level[i])){
+    levels_set$status[i] <- "Initial"
+  }else{
+    levels_set$status[i] <- "Final"
+  }
+}
+
+for(i in 1:nrow(levels_set)){
+  if(grepl("Public", level[i])){
+    levels_set$level[i] <- "Public"
+  }else if(grepl("Small", level[i])){
+    levels_set$level[i] <- "Small"
+  }else{
+    levels_set$level[i] <- "Adults"
+  }
+}
+```
+```{r}
+desired_order <- c("Initial","Final")
+ggplot(na.omit(levels_set),aes(x=level,y=average,fill = factor(status, levels = desired_order)))+
+  geom_bar(stat= 'identity',position = "dodge")+ labs(title = "Initial/Final Confidence Levels")+
+  labs(x="")+
+  scale_y_continuous(breaks = seq(0,10, by = 0.5))+
+  guides(fill=guide_legend(title="Initial or Final"))+
+  theme_minimal()
+
+
+```
+
+
+
+

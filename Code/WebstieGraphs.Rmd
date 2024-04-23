@@ -1,0 +1,265 @@
+---
+title: "Website"
+output: html_document
+date: "2024-04-12"
+---
+```{r}
+data_levels <- data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, Gender, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(Gender!='', ConfLevels!='Adult')
+data_levels
+desired_order <- c('Initial','Final')
+
+ggplot(data_levels, aes(x=factor(Gender, labels=c('Girls','Boys')),y=mean_value,fill = factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  scale_y_continuous(limits=c(0,5)) +
+  scale_fill_manual(values=c('coral1','cornflowerblue'))+
+  facet_wrap(~factor(ConfLevels,c("Public", "Small"),labels = c('Public Speaking', 'Small Group') ))+
+  
+  guides(fill=guide_legend(title=""))+
+  labs(title='Confidence Levels by Gender', subtitle = 'Outcome after one week of T4S',
+       x='Gender', y= 'Average Reported Confidence\n')+
+  theme_classic()+
+  theme(plot.title = element_text(face='bold'), axis.title.x = element_text(face='bold'), 
+                                                axis.title.y = element_text(face='bold')) 
+```
+
+```{r}
+data_levels <- data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, Gender, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(Gender!='', ConfLevels=='Small')
+data_levels
+desired_order <- c('Initial','Final')
+
+ggplot(data_levels, aes(x=factor(Gender, labels=c('Girls','Boys')),y=mean_value,fill = factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  scale_y_continuous(limits=c(0,5)) +
+  scale_fill_manual(values=c('coral1','cornflowerblue'))+
+  facet_wrap(~factor(ConfLevels,c("Small"),labels = c('Small Group') ))+
+  theme_classic()+
+  guides(fill=guide_legend(title=""))+
+  labs(title='Confidence in Small Groups by Gender', 
+       x='Gender', y= 'Average Reported Confidence\n', subtitle = 'Before and After T4S')+
+  theme(plot.title = element_text(face='bold'), axis.title.x = element_text(face='bold'), 
+                                                axis.title.y = element_text(face='bold'))
+```
+
+```{r}
+data_levels <- data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, Gender, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(Gender!='', ConfLevels=='Public')
+data_levels
+desired_order <- c('Initial','Final')
+
+ggplot(data_levels, aes(x=factor(Gender, labels=c('Girls','Boys')),y=mean_value,fill = factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  scale_y_continuous(limits=c(0,5)) +
+  
+  facet_wrap(~factor(ConfLevels,c("Public", "Small"),labels = c('Public Speaking', 'Small Group') ))+
+  
+  guides(fill=guide_legend(title=""))+
+  labs(title='Initial/Final Confidence Levels by Gender', subtitle='Week-long Program',
+       x='Gender', y= 'Average Reported Confidence\n')
+```
+```{r}
+data_levels <- data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, Gender, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(Gender!='', ConfLevels=='Small')
+data_levels
+desired_order <- c('Initial','Final')
+
+ggplot(data_levels, aes(x=factor(Gender, labels=c('Girls','Boys')),y=mean_value,fill = factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  scale_y_continuous(limits=c(0,5)) +
+  
+  facet_wrap(~factor(ConfLevels,c("Public", "Small"),labels = c('Public Speaking', 'Small Group') ))+
+  
+  guides(fill=guide_legend(title=""))+
+  labs(title='Initial/Final Confidence Levels by Gender', subtitle='Week-long Program',
+       x='Gender', y= 'Average Reported Confidence\n')
+```
+
+```{r}
+data_levels <- cumulative_race_filtered %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, Race, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(Race!='', ConfLevels=='Adult')
+data_levels
+
+desired_order <- c('Initial','Final')
+
+ggplot(data_levels, aes(x=factor(Race),y=mean_value,fill = factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  scale_y_continuous(limits=c(0,5)) +
+  
+
+  guides(fill=guide_legend(title=""))+
+  
+  labs(title='Initial/Final Confidence Speaking to Adults by Ethnicity', subtitle='Week-long Program',
+       x='', y= 'Average Reported Confidence\n')
+```
+
+#1
+```{r}
+data_levels <- cumulative_race_filtered %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, Race, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(Race=='Hispanic')
+data_levels
+
+desired_order <- c('Initial','Final')
+order <- c("Public", "Small", "Adult")
+
+ggplot(data_levels, aes(x=factor(ConfLevels, level=order),y=mean_value,fill = factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  scale_y_continuous(limits=c(0,5)) +
+  guides(fill=guide_legend(title=""))+
+  labs(title='Confidence Levels Before and After T4S', subtitle='Hispanic Background',
+       x='', y= 'Average Reported Confidence\n')+
+  theme_classic()+
+  theme(plot.title = element_text(face='bold'), axis.title.x = element_text(face='bold'), 
+                                                axis.title.y = element_text(face='bold'))+
+  scale_x_discrete(labels=c("Public"= 'Public Speaking', "Small"='Small Groups', "Adult"='Speaking to Adults'))+
+  scale_fill_manual(values=c('coral1','cornflowerblue'))
+```
+2
+```{r}
+proportions <- cumulative_race_filtered %>%
+  group_by(Status, Race, Learn) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))%>%
+  filter( Learn != '', Race=='Hispanic')
+
+desired_order<-c('Initial','Final')
+ggplot(proportions, aes(x=Learn,y=proportion,fill = factor(Status, desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  scale_y_continuous(limits=c(0,1))+ facet_wrap(~factor(Race, c('Hispanic'), labels = c('Hispanic Students')))+
+  guides(fill=guide_legend(title=""))+
+  labs(title='Do You Like to Learn?',subtitle = 'Outcome after one week of T4S Curriculum',x='Survey Response', 
+       y = 'Proportion of Responses\n')+
+  theme_classic()+
+  theme(plot.title = element_text(face='bold'), axis.title.x = element_text(face='bold'), 
+                                                axis.title.y = element_text(face='bold'))+
+  scale_fill_manual(values=c('coral1','cornflowerblue'))
+  
+
+```
+
+3
+```{r}
+data_levels <- data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, agerange, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(agerange!='', ConfLevels=='Small', agerange != '9-11')
+data_levels
+
+ggplot(data_levels, aes(x=factor(agerange,level=age_order),y=mean_value,fill =
+                                          factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  scale_y_continuous(limits=c(0,5)) +
+  guides(fill=guide_legend(title=""))+labs(title='Confidence Speaking In Small Groups by Age',
+                                           subtitle='Outcome after one week of T4S Curriculum',x='Age Range',
+                                           y= 'Average Reported Confidence\n')+
+  theme_classic()+
+  theme(plot.title = element_text(face='bold'), axis.title.x = element_text(face='bold'), 
+                                                axis.title.y = element_text(face='bold'))+
+  scale_fill_manual(values=c('coral1','cornflowerblue'))
+
+```
+
+```{r}
+data_levels <- data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, agerange, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(agerange!='', ConfLevels!='Adult', agerange != '9-11')
+data_levels
+
+ggplot(data_levels, aes(x=factor(agerange,level=age_order),y=mean_value,fill =
+                                          factor(Status,level=desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  scale_y_continuous(limits=c(0,5)) + facet_wrap(~factor(ConfLevels, c("Public", "Small"), 
+                                      labels = c("Public"='Public Speaking', "Small"= 'Small Group')))+
+  guides(fill=guide_legend(title=""))+labs(title='Confidence Levels by Age',
+                                           subtitle='Outcome after one week of T4S Curriculum',x='Age Range',
+                                           y= 'Average Reported Confidence\n')+
+  theme_classic()+
+  theme(plot.title = element_text(face='bold'), axis.title.x = element_text(face='bold'), 
+                                                axis.title.y = element_text(face='bold'))+
+  scale_fill_manual(values=c('coral1','cornflowerblue'))
+
+```
+
+```{r}
+data_levels <- monroe_data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, ConfLevels)%>%
+  filter(ConfLevels=='Adult') %>% 
+  summarise(mean_value = mean(Level, na.rm=T))
+
+ggplot(data_levels, aes(x=factor(ConfLevels, c('Public','Small','Adult')),y=mean_value,fill = factor(Status, desired_order)))+
+  geom_bar(stat= 'identity', position='dodge', width = 0.5)+
+  labs(title = "Confidence Level Speaking to Adults", subtitle = 'Outcome after 10 week T4S program',
+       y='Average Reported Confidence\n',x='')+
+  theme_classic()+
+  theme(plot.title = element_text(face='bold'), axis.title.x = element_text(face='bold'), 
+                                                axis.title.y = element_text(face='bold'))+
+  scale_fill_manual(values=c('coral1','cornflowerblue'))+
+
+  guides(fill=guide_legend(title=""))
+```
+```{r}
+proportions <- monroe_data %>%
+  group_by(Status, Learn) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))%>%
+  filter( Learn != '')
+proportions
+
+desired_order <- c("Initial","Final")
+
+ggplot(proportions,aes(x=Learn,y=proportion,fill = factor(Status, level=desired_order)))+
+  geom_bar(stat= 'identity',position = "dodge")+ labs(title = "Do You Like to Learn?", y = 'Proportion of Responses\n',
+                                                      subtitle = 'Outcome after 10 week T4S program')+
+  scale_x_discrete(labels = c("No","Yes")) +
+  labs(x="Do you like to learn?")+
+  guides(fill=guide_legend(title="Initial or Final"))+
+  theme_classic()+
+  theme(plot.title = element_text(face='bold'), axis.title.x = element_text(face='bold'), 
+                                                axis.title.y = element_text(face='bold'))+
+  scale_fill_manual(values=c('coral1','cornflowerblue'))+
+
+  guides(fill=guide_legend(title=""))
+```
+
+
+

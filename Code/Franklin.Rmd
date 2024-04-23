@@ -1,0 +1,66 @@
+---
+title: "Franklin"
+output: html_document
+date: "2024-03-01"
+---
+FRANKLIN PRE/POST
+```{r}
+franklinraw = read.csv2("/Users/oliviacandelaria/Documents/T4S/FranklinCSV.csv",sep=',')
+View(franklinraw)
+franklin=franklinraw
+
+franklin$Initial.Learn <- ifelse(is.na(franklin$Initial.Learn), NA, 
+                              as.logical(tolower(franklin$Initial.Learn) == "yes"))
+franklin$Final.Learn <- ifelse(is.na(franklin$Final.Learn), NA, 
+                              as.logical(tolower(franklin$Final.Learn) == "yes"))
+
+franklin['learn_numeric_I'] <- as.numeric(franklin$Initial.Learn) + is.na(franklin$Initial.Learn)
+franklin['learn_numeric_F'] <- as.numeric(franklin$Final.Learn) + is.na(franklin$Final.Learn)
+
+View(franklin)
+```
+
+```{r}
+FranklinLevels <- franklin %>% 
+  pivot_longer(cols = c("Initial.Public", "Initial.Small", "Initial.Adults",
+                        "Final.Public", "Final.Small", "Final.Adults"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")
+View(FranklinLevels)
+
+FranklinLevels <- FranklinLevels %>% 
+  group_by(ConfLevels)%>%
+  mutate(averages = mean(Level, na.rm=TRUE))
+FranklinLevels['status']=NA
+
+for (i in 1:nrow(FranklinLevels)){
+  if (grepl("Initial",FranklinLevels$ConfLevels[i])){
+    FranklinLevels$status[i] <- "initial"
+  }else{
+    FranklinLevels$status[i] <- "final"
+  }
+}
+
+View(FranklinLevels)
+
+desired_order <- c("initial","final")
+FranklinLevels$status <- factor(FranklinLevels$status, levels = c("initial","final"))
+
+desired_order2 <- c("Initial.Public", "Final.Public", "Initial.Small", "Final.Small", 
+                    "Initial.Adults", "Final.Adults")
+FranklinLevels$ConfLevels <- factor(FranklinLevels$ConfLevels, levels = desired_order2)
+```
+
+Change in Average Confidence Scores (Franklin)
+```{r}
+ggplot(FranklinLevels) + geom_bar(aes(x=ConfLevels, y = averages, fill=status), stat="identity", 
+      position = "dodge") + 
+      labs(title = "Change in Average Confidence Scores (Franklin)", x = "Categories",
+        y= "Averages")+
+      guides(fill=guide_legend(title="Status"))+
+      theme_minimal()
+```
+
+
+
+

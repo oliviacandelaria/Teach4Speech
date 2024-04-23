@@ -1,0 +1,59 @@
+---
+title: "StatsWeb"
+output: html_document
+date: "2024-04-18"
+---
+```{r}
+data_levels <- data %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, Gender, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(Gender!='', ConfLevels!='Adult')
+data_levels <- data_levels %>% arrange(ConfLevels, Gender)
+data_levels
+
+for(i in 1:nrow(data_levels)){
+  if(grepl(data_levels$Status[i], 'Final')){
+    data_levels$pctinc[i] <- (data_levels$mean_value[i]-data_levels$mean_value[i+1])/data_levels$mean_value[i+1]
+  }else{
+    data_levels$pctinc[i] = NA
+  }
+}
+
+```
+```{r}
+data_levels <- cumulative_race_filtered %>% 
+  pivot_longer(cols = c("Public", "Small", "Adult"), 
+               names_to = "ConfLevels", 
+               values_to = "Level")%>%
+  group_by(Status, Race, ConfLevels)%>%
+  summarise(mean_value = mean(Level, na.rm=T))%>%
+  filter(Race=='Hispanic')
+data_levels <- data_levels %>% arrange(ConfLevels)
+data_levels
+
+data_levels$pctinc=NA
+
+for(i in 1:nrow(data_levels)){
+  if(grepl(data_levels$Status[i], 'Final')){
+    data_levels$pctinc[i] <- (data_levels$mean_value[i]-data_levels$mean_value[i+1])/data_levels$mean_value[i+1]
+  }else{
+    data_levels$pctinc[i] = NA
+  }
+}
+```
+```{r}
+proportions <- cumulative_race_filtered %>%
+  group_by(Status, Race, Learn) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))%>%
+  filter( Learn != '', Race=='Hispanic') %>% 
+  arrange(Learn)
+proportions
+(proportions$proportion[3]-proportions$proportion[4])/proportions$proportion[4]
+```
+
+
+
